@@ -1,0 +1,11 @@
+---
+env: dev
+app_dir: /home/{{ vault_user }}/conduit-app
+project_dir: /home/{{ vault_user }}
+log_dir: /var/log/conduit-app
+repo_url: https://github.com/your-repo/conduit-app.git
+jwt_key: "{{ vault_jwt_key }}"
+
+# Database configuration
+db_dialect: postgres
+db_hostname: 127.0.0.1

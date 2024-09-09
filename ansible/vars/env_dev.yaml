@@ -1,0 +1,6 @@
+---
+# Development environment
+db_name: "{{ vault_dev_db_name }}"
+db_username: "{{ vault_dev_db_username }}"
+db_password: "{{ vault_dev_db_password }}"
+db_logging: true
