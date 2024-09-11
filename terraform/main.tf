@@ -23,8 +23,7 @@ resource "ansible_host" "conduit-tf" {
 
 resource "null_resource" "ansible_playbook" {
   provisioner "local-exec" {
-    # command = "ansible-playbook playbook.yaml -e 'env=dev' --ask-vault-pass"
-    command = "ansible-playbook playbook.yaml  -e 'env=dev' --ask-vault-pass"
+    command = "ansible-playbook main.yaml  -e 'env=dev' --ask-vault-pass"
     working_dir = "${path.module}/ansible"
   }
 
