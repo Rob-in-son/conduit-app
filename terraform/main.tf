@@ -8,11 +8,6 @@ resource "aws_instance" "conduit-tf" {
     tags = {
         Name = "conduit-tf"
     }
-
-    # Add the ip address to the ansible hosts file
-    # provisioner "local-exec" {
-    #     command = "echo ${self.public_ip} >> /etc/ansible/hosts"
-    # }
 }
 
 resource "ansible_host" "conduit-tf" {
@@ -20,10 +15,22 @@ resource "ansible_host" "conduit-tf" {
     name = aws_instance.conduit-tf.public_dns
     groups = ["ansible_client"]
     variables = {
-    ansible_user = "ubuntu"
-    ansible_ssh_private_key_file = "~/.ssh/id_rsa"
-    ansible_python_interpreter = "/opt/homebrew/bin/python3"
+        ansible_user = "uche"
+        ansible_ssh_private_key_file = "~/.ssh/conduit"
+        ansible_python_interpreter = "/opt/homebrew/bin/python3"
     }
+}
+
+resource "null_resource" "ansible_playbook" {
+  provisioner "local-exec" {
+    # command = "ansible-playbook playbook.yaml -e 'env=dev' --ask-vault-pass"
+    command = "ansible-playbook playbook.yaml  -e 'env=dev' --ask-vault-pass"
+    working_dir = "${path.module}/ansible"
+  }
+
+  depends_on = [
+    ansible_host.conduit-tf
+  ]
 }
 
 output "ip" {
