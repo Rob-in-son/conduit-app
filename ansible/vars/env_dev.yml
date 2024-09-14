@@ -1,0 +1,6 @@
+---
+# Development environment
+db_name: "{{ dev_db_name }}"
+db_username: "{{ dev_db_username }}"
+db_password: "{{ dev_db_password }}"
+db_logging: true

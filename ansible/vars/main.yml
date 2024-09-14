@@ -1,10 +1,9 @@
----
 env: dev
-app_dir: /home/{{ vault_user }}/conduit-app
+app_dir: /home/{{ user }}/conduit-app
 project_dir: /home/{{ vault_user }}
 log_dir: /var/log/conduit-app
-repo_url: https://github.com/your-repo/conduit-app.git
-jwt_key: "{{ vault_jwt_key }}"
+repo_url: https://github.com/Rob-in-son/conduit-app.git
+repo_name: conduit-app
 
 # Database configuration
 db_dialect: postgres

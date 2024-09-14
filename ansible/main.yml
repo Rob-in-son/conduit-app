@@ -1,0 +1,106 @@
+---
+- name: Deploy conduit app
+  hosts: conduit-tf
+  become: yes
+  vars_files:
+    - ./vars/main.yml
+    - vars/vault.yml
+    - vars/env_dev.yml
+
+  tasks:
+    - name: Clean apt
+      become: true
+      apt:
+        autoclean: yes
+        autoremove: yes
+
+    - name: Fix broken packages
+      become: true
+      command: apt --fix-broken install
+
+    - name: Update apt cache
+      apt: update_cache=yes
+
+    - name: Install base dependencies
+      apt:
+        name: 
+          - git 
+          - acl #installed this because I was having issues creating the database, kept getting permissions error
+          - postgresql
+          - nginx
+        state: present
+    
+    - name: Install Node.js
+      shell: |
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash - 
+        sudo apt-get install -y nodejs
+
+    - name: Clone or update github repository
+      git:
+        repo: "{{ repo_url }}"
+        dest: "/home/{{ user }}/conduit-app"
+        version: "{{ repo_version | default('main') }}"
+        force: yes
+        update: yes
+
+    - name: Install project dependencies
+      npm:
+        path: "{{ app_dir }}"
+      become: yes
+
+    - name: Create .env file
+      copy:
+        content: |
+          PORT= {{ ports }}
+          JWT_KEY={{ jwt_key }}
+ 
+          ## Development Database
+          DEV_DB_USERNAME={{ dev_db_username }}
+          DEV_DB_PASSWORD={{ dev_db_password }}
+          DEV_DB_NAME={{ dev_db_name }}
+          DEV_DB_HOSTNAME={{ db_hostname }}
+          DEV_DB_DIALECT={{ db_dialect }}
+          DEV_DB_LOGGING=true
+        dest: "{{ app_dir }}/backend/.env"
+        owner: "{{ user }}"
+        group: "{{ user }}"
+        mode: '0600'
+      # notify: Restart application
+
+    - name: Create database using Sequelize CLI
+      become: yes
+      become_user: postgres
+      shell: |
+        psql -c "CREATE DATABASE {{ dev_db_name }};"
+        psql -c "CREATE USER {{ dev_db_username }} WITH ENCRYPTED PASSWORD '{{ dev_db_password }}';"
+        psql -c "GRANT ALL PRIVILEGES ON DATABASE {{ dev_db_name }} TO {{ dev_db_username }};"
+        psql -d {{ dev_db_name }} -c "GRANT USAGE ON SCHEMA public TO {{ dev_db_username }};"
+        psql -d {{ dev_db_name }} -c "GRANT CREATE ON SCHEMA public TO {{ dev_db_username }};"
+        psql -d {{ dev_db_name }} -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO {{ dev_db_username }};"
+      args:
+        executable: /bin/bash
+
+    - name: Populate database with dummy data
+      npm:
+        command: "run sqlz -- db:seed:all"
+        args:
+          chdir: "{{ app_dir }}"
+
+    # - name: Remove default Nginx configuration
+    #   file:
+    #     path: /etc/nginx/conf.d/default.conf
+    #     state: absent
+
+    # # Create nginx.conf.j2 template
+    # - name: Set up custom Nginx configuration
+    #   template:
+    #     # src: conduit.conf
+    #     dest: /etc/nginx/conf.d/conduit.conf
+    #     mode: '0644'
+    #     owner: root
+    #     group: root
+    #   notify: Restart Nginx
+
+    - name: Debug environment
+      debug:
+        msg: "Running in {{ environment }} environment"

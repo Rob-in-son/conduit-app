@@ -1,0 +1,9 @@
+---
+user: ubuntu
+jwt_key: supersecretkey_example
+ports: 3001
+
+# Development DB
+dev_db_name: devdb
+dev_db_username: conduitdev
+dev_db_password: password
