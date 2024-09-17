@@ -2,7 +2,7 @@ resource "aws_security_group" "conduit-app-sg" {
 
   # A single ingress rule to allow traffic on all specified ports
   ingress = [
-    for port in [22, 80, 443, 3000] : {
+    for port in [22, 80, 443, 3000, 3001] : {
       description      = "TLS from VPC"
       from_port        = port
       to_port          = port

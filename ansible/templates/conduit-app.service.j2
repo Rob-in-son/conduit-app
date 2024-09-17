@@ -1,0 +1,15 @@
+[Unit]
+Description=Conduit-app 
+After=network.target
+
+[Service]
+Environment=HOST=127.0.0.1
+User={{ user }}
+WorkingDirectory={{ app_dir }}
+ExecStart=/usr/bin/npm run dev
+Restart=always
+StandardOutput=append:{{ log_dir }}/out.log
+StandardError=append:{{ log_dir }}/error.log
+
+[Install]
+WantedBy=multi-user.target
