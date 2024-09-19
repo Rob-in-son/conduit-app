@@ -1,8 +1,8 @@
-# Conduit RealWorld Example App with Terraform and Ansible
+# Conduit App with Terraform and Ansible
 
 > **React / Vite + SWC / Express.js / Sequelize / PostgreSQL codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.io/) spec and API, with added Terraform and Ansible deployment.**
 
-This project extends the original Conduit RealWorld Example App by adding infrastructure-as-code (Terraform) and configuration management (Ansible) capabilities for easy deployment to AWS EC2.
+This project extends the original Conduit App by adding infrastructure-as-code (Terraform) and configuration management (Ansible) capabilities for easy deployment to AWS EC2.
 
 ## Project Structure
 
