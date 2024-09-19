@@ -85,7 +85,7 @@ If you need to run Ansible manually:
 
 ## Original Conduit App Setup
 
-For local development and more details about the Conduit app itself, please refer to the [original README](#original-readme).
+### For local development and more details about the Conduit app itself, please refer to the [original README](#original-readme).
 ---
 
 <a name="original-readme"></a>
@@ -113,13 +113,13 @@ To install the project on your computer, follow these steps:
 1. Clone the repository to your local machine.
 
    ```bash
-   git clone https://github.com/TonyMckes/conduit-realworld-example-app.git
+   git clone https://github.com/TonyMckes/conduit-app
    ```
 
 2. Navigate to the project directory.
 
    ```bash
-   cd conduit-realworld-example-app
+   cd conduit-app
    ```
 
 3. Install project dependencies by running the command:
