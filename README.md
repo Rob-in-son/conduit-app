@@ -1,14 +1,96 @@
-# ![RealWorld Example App](logo.png)
+# Conduit RealWorld Example App with Terraform and Ansible
 
-> **React / Vite + SWC / Express.js / Sequelize / PostgreSQL codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.io/) spec and API.**
+> **React / Vite + SWC / Express.js / Sequelize / PostgreSQL codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.io/) spec and API, with added Terraform and Ansible deployment.**
 
-This codebase was created to demonstrate a fully fledged fullstack application built with **React / Vite + SWC / Express.js / Sequelize / PostgreSQL** including CRUD operations, authentication, routing, pagination, and more.
+This project extends the original Conduit RealWorld Example App by adding infrastructure-as-code (Terraform) and configuration management (Ansible) capabilities for easy deployment to AWS EC2.
 
-**[Demo app](https://conduit-realworld-example-app.fly.dev/)&nbsp;&nbsp;|&nbsp;&nbsp;[With Create React App](https://github.com/TonyMckes/conduit-realworld-example-app/tree/create-react-app)&nbsp;&nbsp;|&nbsp;&nbsp;[Other RealWorld Example Apps](https://codebase.show/projects/realworld?category=fullstack)**
+## Project Structure
 
-> For more information on how to this works with other frontends/backends, head over to the [RealWorld](https://github.com/gothinkster/realworld) repo.
+```
+conduit-app/
+├── ansible/
+│   ├── templates/
+│   │   ├── conduit-app.service.j2
+│   │   └── nginx.conf.j2
+│   ├── vars/
+│   │   ├── env_dev.yml
+│   │   ├── main.yml
+│   │   └── vault.yml
+│   ├── inventory.ini
+│   └── main.yml
+├── backend/
+├── frontend/
+├── terraform/
+│   ├── .terraform/
+│   ├── .terraform.lock.hcl
+│   ├── main.tf
+│   ├── provider.tf
+│   ├── setup.sh
+│   ├── variables.tf
+│   └── vpc.tf
+├── .gitignore
+├── CODE_OF_CONDUCT.md
+├── LICENSE
+├── logo.png
+├── package-lock.json
+├── package.json
+├── README.md
+└── vitest.config.js
+```
 
+## Prerequisites
+
+- [Terraform](https://www.terraform.io/downloads.html)
+- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+- AWS account and configured AWS CLI
+- All prerequisites from the original Conduit app (Node.js, NPM, SQL database)
+
+## Deployment
+
+### 1. Terraform Setup
+
+1. Navigate to the `terraform` directory:
+   ```
+   cd terraform
+   ```
+
+2. Initialize Terraform:
+   ```
+   terraform init
+   ```
+
+3. Review and apply the Terraform configuration:
+   ```
+   terraform plan
+   terraform apply
+   ```
+
+This will create an EC2 instance on AWS and generate an Ansible inventory file.
+
+### 2. Ansible Deployment
+
+After Terraform has provisioned the EC2 instance, Ansible will automatically run to configure the server and deploy the application.
+
+If you need to run Ansible manually:
+
+1. Navigate to the `ansible` directory:
+   ```
+   cd ~/conduit-app/ansible
+   ```
+
+2. Run the Ansible playbook:
+   ```
+   ansible-playbook -i inventory.ini main.yml -e 'env=dev' --ask-vault-pass -v
+   ```
+
+## Original Conduit App Setup
+
+For local development and more details about the Conduit app itself, please refer to the [original README](#original-readme).
 ---
+
+<a name="original-readme"></a>
+
+## Original README Content
 
 ## Getting Started
 

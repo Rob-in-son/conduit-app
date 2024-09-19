@@ -8,15 +8,15 @@
     - vars/env_dev.yml
 
   tasks:
-    - name: Clean apt
-      become: true
-      apt:
-        autoclean: yes
-        autoremove: yes
+    # - name: Clean apt
+    #   become: true
+    #   apt:
+    #     autoclean: yes
+    #     autoremove: yes
 
-    - name: Fix broken packages
-      become: true
-      command: apt --fix-broken install
+    # - name: Fix broken packages
+    #   become: true
+    #   command: apt --fix-broken install
 
     - name: Update apt cache
       apt: update_cache=yes
@@ -25,7 +25,7 @@
       apt:
         name: 
           - git 
-          - acl #installed this because I was having issues creating the database, kept getting permissions error
+          - acl 
           - postgresql
           - nginx
         state: present
@@ -73,7 +73,6 @@
         owner: "{{ user }}"
         group: "{{ user }}"
         mode: '0600'
-      # notify: Restart application
 
     - name: Create database using Sequelize CLI
       become: yes
@@ -87,12 +86,6 @@
         psql -d {{ dev_db_name }} -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO {{ dev_db_username }};"
       args:
         executable: /bin/bash
-
-    # - name: Populate database with dummy data
-    #   shell:  "npm run sqlz -- db:seed:all"
-    #   args:
-    #     executable: /bin/bash
-    #     chdir: "{{ app_dir }}"
 
     - name: Remove default Nginx configuration
       file:
