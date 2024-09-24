@@ -21,8 +21,8 @@ jobs:
 
       - name: Update backend.tf
         run: |
-            sed -i "s|conduit-terraform-state|${{ secrets.BUCKET_NAME }}|" backend.tf
-            sed -i "s|conduit-terraform-state|${{ secrets.STATE_KEY }}|" backend.tf
+            sed -i "s|conduit-terraform-state|${{ secrets.BUCKET_NAME }}|" conduit-app/terraform/backend.tf
+            sed -i "s|conduit-terraform-state|${{ secrets.STATE_KEY }}|" conduit-app/terraform/backend.tf
     
       - name: Add SSH key
         env:
