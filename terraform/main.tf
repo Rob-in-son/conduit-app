@@ -28,18 +28,19 @@ resource "null_resource" "wait_for_instance" {
   depends_on = [aws_instance.conduit-tf]
 }
 
-resource "null_resource" "ansible_playbook" {
-  provisioner "local-exec" {
-    command = "ansible-playbook -i inventory.ini main.yml -e 'env=dev' --ask-vault-pass -v"
-    working_dir = "../ansible"
-  }
+# commented this to run ansible from the workflow instead
+# resource "null_resource" "ansible_playbook" {
+#   provisioner "local-exec" {
+#     command = "ansible-playbook -i inventory.ini main.yml -e 'env=dev' --ask-vault-pass -v"
+#     working_dir = "../ansible"
+#   }
 
-  depends_on = [
-    local_file.ansible_inventory,
-    aws_instance.conduit-tf,
-    null_resource.wait_for_instance
-  ]
-}
+#   depends_on = [
+#     local_file.ansible_inventory,
+#     aws_instance.conduit-tf,
+#     null_resource.wait_for_instance
+#   ]
+# }
 
 output "ip" {
     value = "${aws_instance.conduit-tf.public_ip}"

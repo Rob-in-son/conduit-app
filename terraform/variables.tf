@@ -18,10 +18,10 @@ variable "key_name" {
     default = "conduit-app-key" 
 }
 
-variable "userdata_script" {
-    description = "Script to be executed by userdata"
-    default = "./setup.sh"
-}
+# variable "userdata_script" {
+#     description = "Script to be executed by userdata"
+#     default = "./setup.sh"
+# }
 
 variable "region" {
     description = "Region"

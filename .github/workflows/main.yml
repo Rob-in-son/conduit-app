@@ -1,0 +1,56 @@
+name: Create and deploy app
+on: 
+    workflow_dispatch:
+
+jobs: 
+  create-resources:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Repository checkout
+        uses: actions/checkout@v4
+
+      - name: Install terraform 
+        uses: hashicorp/setup-terraform@v3
+    
+      - name: Setup AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Update backend.tf
+        run: |
+            sed -i "s|your-bucket-name|${{ secrets.BUCKET_NAME }}|" backend.tf
+            sed -i "s|your-state-key|${{ secrets.STATE_KEY }}|" backend.tf
+    
+      - name: Add SSH key
+        env:
+            SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+            mkdir -p /home/runner/.ssh
+            echo "${{ secrets.EC2_PRIVATE_KEY }}" > /home/runner/.ssh/id_rsa
+            chmod 600 /home/runner/.ssh/id_rsa
+            ssh-agent -a $SSH_AUTH_SOCK > /dev/null	
+            ssh-add /home/runner/.ssh/id_rsa
+
+      - name: Initialize Terraform dependencies
+        run: terraform init
+
+      - name: Validate Terraform scripts
+        run: terraform validate
+
+      - name: Apply changes
+        run: terraform apply --auto-approve
+
+      - name: Deploy application using Ansible config
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          ANSIBLE_VAULT_PASSWORD_FILE: /tmp/vault_password.txt
+        run: |
+          echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > /tmp/vault_password.txt
+          ansible-playbook -i inventory.ini main.yml -e 'env=dev' --vault-password-file /tmp/vault_password.txt -v
+
+      - name: Upload .terraform.lock.hcl
+        run: aws s3 cp .terraform.lock.hcl s3://${{ secrets.BUCKET_NAME }}/${{ secrets.STATE_KEY }}/.terraform.lock.hcl
+
