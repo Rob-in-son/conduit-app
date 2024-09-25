@@ -1,9 +1,9 @@
-name: Create and deploy app
+name: Create infra and deploy app
 on: 
     workflow_dispatch:
 
 jobs: 
-  create-resources:
+  create:
     runs-on: ubuntu-latest
     steps: 
       - name: Repository checkout
