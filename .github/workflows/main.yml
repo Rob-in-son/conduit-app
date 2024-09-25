@@ -35,15 +35,19 @@ jobs:
             ssh-add /home/runner/.ssh/conduit-app-key.pem
 
       - name: Initialize Terraform dependencies
+        working-directory: ./terraform
         run: terraform init
 
       - name: Validate Terraform scripts
+        working-directory: ./terraform
         run: terraform validate
 
       - name: Apply changes
+        working-directory: ./terraform
         run: terraform apply --auto-approve
 
       - name: Deploy application using Ansible config
+        working-directory: ./ansible
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
           ANSIBLE_VAULT_PASSWORD_FILE: /tmp/vault_password.txt
