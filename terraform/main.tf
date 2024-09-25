@@ -4,7 +4,7 @@ resource "aws_instance" "conduit-tf" {
     key_name = var.key_name
     vpc_security_group_ids = [aws_security_group.conduit-app-sg.id]
     # user_data = templatefile(var.userdata_script, {})
-
+  
     tags = {
         Name = "conduit-tf"
     }
@@ -22,7 +22,7 @@ resource "local_file" "ansible_inventory" {
 
 resource "null_resource" "wait_for_instance" {
   provisioner "local-exec" {
-    command = "sleep 60" 
+    command = "sleep 120" 
   }
 
   depends_on = [aws_instance.conduit-tf]

@@ -53,7 +53,7 @@ jobs:
           ANSIBLE_VAULT_PASSWORD_FILE: /tmp/vault_password.txt
         run: |
           echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > /tmp/vault_password.txt
-          ansible-playbook -i inventory.ini main.yml -e 'env=dev' --vault-password-file /tmp/vault_password.txt -v
+          ansible-playbook -i inventory.ini main.yml -e 'env=dev' --vault-password-file /tmp/vault_password.txt -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 
       - name: Upload .terraform.lock.hcl
         run: aws s3 cp .terraform.lock.hcl s3://${{ secrets.BUCKET_NAME }}/${{ secrets.STATE_KEY }}/.terraform.lock.hcl
