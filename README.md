@@ -1,8 +1,8 @@
-# Conduit App with Terraform and Ansible
+# Conduit App with Terraform, Ansible, and GitHub Actions
 
-> **React / Vite + SWC / Express.js / Sequelize / PostgreSQL codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.io/) spec and API, with added Terraform and Ansible deployment.**
+**React / Vite + SWC / Express.js / Sequelize / PostgreSQL codebase containing real-world examples (CRUD, auth, advanced patterns, etc) that adhere to the RealWorld spec and API, with added Terraform and Ansible deployment, now automated with GitHub Actions.**
 
-This project extends the original Conduit App by adding infrastructure-as-code (Terraform) and configuration management (Ansible) capabilities for easy deployment to AWS EC2.
+This project extends the original Conduit App by adding infrastructure-as-code (Terraform), configuration management (Ansible) capabilities for easy deployment to AWS EC2, and GitHub Actions for automated workflow.
 
 ## Project Structure
 
@@ -28,6 +28,9 @@ conduit-app/
 │   ├── setup.sh
 │   ├── variables.tf
 │   └── vpc.tf
+├── .github/
+│   └── workflows/
+│       └── deploy.yml
 ├── .gitignore
 ├── CODE_OF_CONDUCT.md
 ├── LICENSE
@@ -40,14 +43,50 @@ conduit-app/
 
 ## Prerequisites
 
-- [Terraform](https://www.terraform.io/downloads.html)
-- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
-- AWS account and configured AWS CLI
-- All prerequisites from the original Conduit app (Node.js, NPM, SQL database)
+* GitHub account with Actions enabled
+* AWS account with configured IAM user for programmatic access
+* All prerequisites from the original Conduit app (Node.js, NPM, SQL database)
 
 ## Deployment
 
-### 1. Terraform Setup
+The deployment process is now fully automated using GitHub Actions. The workflow is triggered manually ("workflow_dispatch") and performs the following steps:
+
+1. Checks out the repository
+2. Sets up Terraform
+3. Configures AWS CLI with secrets
+4. Updates the Terraform backend configuration
+5. Sets up SSH for Ansible
+6. Initializes and validates Terraform
+7. Applies Terraform changes to create/update infrastructure
+8. Runs Ansible playbook to deploy the application
+9. Uploads the Terraform lock file to S3
+
+### GitHub Secrets
+
+To run the workflow, you need to set up the following secrets in your GitHub repository:
+
+- `AWS_ACCESS_KEY_ID`: Your AWS access key ID
+- `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key
+- `AWS_REGION`: The AWS region to deploy to
+- `BUCKET_NAME`: The name of your S3 bucket for Terraform state
+- `STATE_KEY`: The key for your Terraform state file in the S3 bucket
+- `EC2_PRIVATE_KEY`: The private key for SSH access to EC2 instances
+- `ANSIBLE_VAULT_PASSWORD`: The password to decrypt Ansible vault files
+
+### Running the Workflow
+
+To deploy the application:
+
+1. Go to the "Actions" tab in your GitHub repository
+2. Select the "Create infra and deploy app" workflow
+3. Click "Run workflow"
+4. Monitor the workflow progress and check for any errors
+
+## Manual Steps (if needed)
+
+While the GitHub Actions workflow automates the entire process, you can still perform manual steps if necessary:
+
+### Terraform Setup
 
 1. Navigate to the `terraform` directory:
    ```
@@ -65,11 +104,7 @@ conduit-app/
    terraform apply
    ```
 
-This will create an EC2 instance on AWS and generate an Ansible inventory file.
-
-### 2. Ansible Deployment
-
-After Terraform has provisioned the EC2 instance, Ansible will automatically run to configure the server and deploy the application.
+### Ansible Deployment
 
 If you need to run Ansible manually:
 
