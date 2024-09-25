@@ -29,10 +29,10 @@ jobs:
             SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
             mkdir -p /home/runner/.ssh
-            echo "${{ secrets.EC2_PRIVATE_KEY }}" > /home/runner/.ssh/id_rsa
+            echo "${{ secrets.EC2_PRIVATE_KEY }}" > /home/runner/.ssh/conduit-app-key.pem
             chmod 600 /home/runner/.ssh/id_rsa
             ssh-agent -a $SSH_AUTH_SOCK > /dev/null	
-            ssh-add /home/runner/.ssh/id_rsa
+            ssh-add /home/runner/.ssh/conduit-app-key.pem
 
       - name: Initialize Terraform dependencies
         run: terraform init
