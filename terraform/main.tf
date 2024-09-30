@@ -10,8 +10,22 @@ resource "aws_instance" "conduit-tf" {
     }
 }
 
+resource "aws_instance" "monitorserver" {
+    ami = var.ami_id
+    instance_type = var.instance_type
+    key_name = var.key_name
+    vpc_security_group_ids = [aws_security_group.conduit-app-sg.id]
+    # user_data = templatefile(var.userdata_script, {})
+  
+    tags = {
+        Name = "monitorserver"
+    }
+}
+
 resource "local_file" "ansible_inventory" {
   content = <<-EOT
+    [monitorserver]
+    ${aws_instance.monitorserver.public_ip} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/conduit-app-key.pem
     [conduit-tf]
     ${aws_instance.conduit-tf.public_ip} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/conduit-app-key.pem
   EOT
@@ -28,7 +42,7 @@ resource "null_resource" "wait_for_instance" {
   depends_on = [aws_instance.conduit-tf]
 }
 
-# commented this to run ansible from the workflow instead
+# Uncomment this to run ansible from terraform
 # resource "null_resource" "ansible_playbook" {
 #   provisioner "local-exec" {
 #     command = "ansible-playbook -i inventory.ini main.yml -e 'env=dev' --ask-vault-pass -v"
