@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Update bucket name
-        run: sed -i "s|conduit-terraform-state|${{ secrets.BUCKET_NAME }}|" backend.tf
+        run: sed -i "s|conduit-terraform-state|${{ secrets.BUCKET_NAME }}|" terraform/backend.tf
         
       - name: Download terraform.lock.hcl
         run: aws s3 cp s3://${{ secrets.BUCKET_NAME }}/${{ secrets.STATE_KEY }}/.terraform.lock.hcl .
