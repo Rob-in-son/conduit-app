@@ -15,13 +15,13 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ inputs.aws_region }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Repository checkout
         uses: actions/checkout@v4
 
       - name: Update bucket name
-        run: sed -i "s|your-bucket-name|${{ inputs.bucket_name }}|" backend.tf
+        run: sed -i "s|your-bucket-name|${{ secrets.BUCKET_NAME }}|" backend.tf
         
       - name: Download terraform.lock.hcl
         run: aws s3 cp s3://${{ secrets.BUCKET_NAME }}/${{ secrets.STATE_KEY }}/.terraform.lock.hcl .

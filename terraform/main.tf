@@ -31,7 +31,7 @@ resource "local_file" "ansible_inventory" {
   EOT
   filename = "../ansible/inventory.ini"
 
-  depends_on = [aws_instance.conduit-tf]
+  depends_on = [aws_instance.conduit-tf, aws_instance.monitorserver]
 }
 
 resource "null_resource" "wait_for_instance" {
